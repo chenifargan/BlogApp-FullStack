@@ -6,11 +6,13 @@ function RegisterPage() {
   const register = (event) => {
     const data = { username: username, password: password };
     event.preventDefault();
-    console.log(event.preventDefault());
-    console.log(username);
-    console.log(password);
+
     axios.post("http://localhost:4000/register", data).then((response) => {
-      console.log(response.data);
+      if (response.data.error) {
+        alert(response.data.error);
+      } else {
+        console.log(response.data);
+      }
     });
   };
   return (
