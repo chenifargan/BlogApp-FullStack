@@ -1,44 +1,50 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../UserContext";
+
 function Header() {
   const { setUserInfo, userInfo } = useContext(UserContext);
+
   useEffect(() => {
     axios
       .get("http://localhost:4000/profile", {
-        headers: {
-          "Content-Type": "application/json",
-        },
         withCredentials: true,
       })
       .then((response) => {
         if (response.data.error) {
+          setUserInfo({ ...userInfo, status: false });
           console.log(response.data.error);
         } else {
-          setUserInfo(response.data.username);
+          setUserInfo({
+            username: response.data.username,
+            id: response.data.id,
+            status: true,
+          });
+          console.log(response.data);
         }
-
-        // setusername(response.data.username);
       });
   }, []);
   const logout = () => {
     axios.post("http://localhost:4000/logout").then((response) => {
-      //setusername(null);
-      setUserInfo(null);
-
+      setUserInfo({
+        username: "",
+        id: 0,
+        status: false,
+      });
       console.log(response.data);
     });
   };
-  const username = userInfo?.username;
 
   return (
     <header>
+      <span>Hello ,{userInfo.username}</span>
+
       <Link to="/" className="logo">
         My Blog
       </Link>
       <nav>
-        {username && (
+        {userInfo.status && (
           <>
             <Link to="/create" className="log">
               Create new post
@@ -46,7 +52,7 @@ function Header() {
             <a onClick={logout}>Logout</a>
           </>
         )}
-        {!username && (
+        {!userInfo.status && (
           <>
             <Link to="/login" className="log">
               Login

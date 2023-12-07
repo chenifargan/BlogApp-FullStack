@@ -23,8 +23,13 @@ function LogInPage() {
         if (response.data.error) {
           alert(response.data.error);
         } else {
-          setUserInfo(response.data);
+          setUserInfo({
+            username: response.data.username,
+            id: response.data.id,
+            status: true,
+          });
           console.log(response.data);
+
           navigate("/");
         }
       });
